@@ -28,5 +28,21 @@ class UserSeeder extends Seeder
             'password' => 'password',
             'updated_by' => 1,
         ]);
+
+        User::create([
+            'name' => 'User2',
+            'role_id' => 2,
+            'email' => 'user2@user.com',
+            'password' => 'password',
+            'updated_by' => 1,
+        ]);
+
+        User::create([
+            'name' => 'User3',
+            'role_id' => 2,
+            'email' => 'user3@user.com',
+            'password' => 'password',
+            'updated_by' => 1,
+        ]);
     }
 }
