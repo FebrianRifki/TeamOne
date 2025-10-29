@@ -28,11 +28,16 @@
             </div>
 
              <!-- Nav Item - Charts -->
-             <li class="nav-item">
-                <a class="nav-link" href="{{ route('users.index') }}">
-                    <i class="fas fa-users"></i>
-                    <span>Users</span></a>
-            </li>
+             @php
+                 $role = Auth::user()->role_id;
+             @endphp
+             @if ($role == 1)
+                 <li class="nav-item">
+                     <a class="nav-link" href="{{ route('users.index') }}">
+                         <i class="fas fa-users"></i>
+                         <span>Users</span></a>
+                 </li>
+             @endif
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
@@ -44,9 +49,11 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">All Projects</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
-                        <a class="collapse-item" href="register.html">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                        @foreach ($projects as $project)
+                            <a class="collapse-item" href="#">
+                                {{ $project->project_name }}
+                            </a>
+                        @endforeach
                         {{-- <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Other Pages:</h6>
                         <a class="collapse-item" href="404.html">404 Page</a>
