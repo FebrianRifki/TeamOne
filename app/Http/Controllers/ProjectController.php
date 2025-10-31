@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Project;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Project;
+use App\Models\Task;
 
 class ProjectController extends Controller
 {
@@ -68,6 +69,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+        $project->load(['tasks']);
         return view('projects.detail', compact('project'));
     }
 
