@@ -28,9 +28,14 @@
                                 <h6 class="card-title fw-bold mb-2 text-primary">
                                     {{ $task->task_name }}
                                 </h6>
-                                <button class="btn btn-light btn-sm border-0 text-secondary" onclick="displayEditModal({{$task->id}})">
-                                    <i class="fas fa-pen"></i>
-                                </button>
+                                <div>
+                                    <button class="btn btn-light btn-sm border-0 text-secondary" onclick="deleteTask({{$task->id}})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    <button class="btn btn-light btn-sm border-0 text-secondary" onclick="displayEditModal({{$task->id}})">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </div>
                             </div>
                             <p class="card-text text-muted small mb-0">
                                 {{ $task->description }}
@@ -89,9 +94,11 @@
                 </div>
 
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary" id="buttonUpdate" type="button" onclick="updateTask()">Save</button>
+            <div class="modal-footer ">
+                <div>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" id="buttonUpdate" type="button" onclick="updateTask()">Save</button>
+                </div>
             </div>
         </div>
     </div>
@@ -120,7 +127,7 @@
 
     function getDetailTask(id) {
         $.ajax({
-            url: `/projects/${id}/edit`,
+            url: `/tasks/${id}/edit`,
             type: 'GET',
             success: function(response) {
                 $('#task_name').val(response[0].task_name);
@@ -156,7 +163,7 @@
         var id = $('#task_id').val();
         $('#buttonUpdate').prop('disabled', true);
         $.ajax({
-            url: `/projects/${id}`,
+            url: `/tasks/${id}`,
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
@@ -197,6 +204,49 @@
                 });
             }
         })
+    }
+
+    function deleteTask(id) {
+        var taskId = id;
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This task will be permanently deleted.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/tasks/${taskId}`,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: 'Task has been deleted.',
+                            timer: 1000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function(error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to delete task!',
+                            timer: 1000,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            }
+        });
     }
 </script>
 @endpush

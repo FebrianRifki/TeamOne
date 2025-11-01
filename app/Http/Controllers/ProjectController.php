@@ -82,9 +82,9 @@ class ProjectController extends Controller
      */
     public function edit(string $id)
     {
-        $task = Task::with(['project', 'user'])->where('id', $id)->first();
-        $users = User::where('role_id', '!=', 1)->get();
-        return response()->json([$task, $users]);
+        // $task = Task::with(['project', 'user'])->where('id', $id)->first();
+        // $users = User::where('role_id', '!=', 1)->get();
+        // return response()->json([$task, $users]);
     }
 
     /**
@@ -92,39 +92,7 @@ class ProjectController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'task_name' => 'required|string|max:255',
-                'description' => 'required|string',
-                'assigned_to' => 'required|exists:users,id',
-                'priority' => 'required|in:1,2,3',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => 'error',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            $task = Task::findOrFail($id);
-            $task->task_name = $request->task_name;
-            $task->description = $request->description;
-            $task->assigned_to = (int) $request->assigned_to;
-            $task->priority = $request->priority;
-            $task->save();
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Task updated successfully.',
-                'task' => $task
-            ]);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Error: ' . $th->getMessage()
-            ], 500);
-        }
+       
     }
 
     /**
@@ -132,6 +100,6 @@ class ProjectController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        
     }
 }
