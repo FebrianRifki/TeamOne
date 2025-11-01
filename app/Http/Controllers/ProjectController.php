@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
+
+use function Pest\Laravel\json;
 
 class ProjectController extends Controller
 {
@@ -70,7 +73,8 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         $project->load(['tasks']);
-        return view('projects.detail', compact('project'));
+        $users = User::where('role_id', '!=', 1)->get();
+        return view('projects.detail', compact('project', 'users'));
     }
 
     /**
@@ -78,7 +82,9 @@ class ProjectController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $task = Task::with(['project', 'user'])->where('id', $id)->first();
+        $users = User::where('role_id', '!=', 1)->get();
+        return response()->json([$task, $users]);
     }
 
     /**
