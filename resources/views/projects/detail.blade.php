@@ -59,6 +59,7 @@
             </div>
             <div class="modal-body" id="editModalBody">
                 <div class="modal-body">
+                    <input type="hidden" id="task_id" name="task_id">
                     <form id="editTaskForm">
                         <div class="form-group">
                             <label>Task Name</label>
@@ -70,7 +71,7 @@
                         </div>
                         <div class="form-group">
                             <label>Assigned To</label>
-                            <select id="user_id" name="user_id" class="form-control">
+                            <select id="assigned_to" name="assigned_to" class="form-control">
                                 @foreach($users as $user)
                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
                                 @endforeach
@@ -90,7 +91,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary" type="button" data-dismiss="modal">Save</button>
+                <button class="btn btn-primary" id="buttonUpdate" type="button" onclick="updateTask()">Save</button>
             </div>
         </div>
     </div>
@@ -112,6 +113,7 @@
 @push('scripts')
 <script>
     function displayEditModal(id) {
+        $('#task_id').val(id);
         $('#editModal').modal('show');
         getDetailTask(id);
     }
@@ -125,7 +127,7 @@
                 $('#description').val(response[0].description);
 
                 // Kosongkan select dan append options
-                var userSelect = $('#user_id');
+                var userSelect = $('#assigned_to');
                 userSelect.empty();
 
                 response[1].forEach(u => {
@@ -135,7 +137,7 @@
                         .text(u.name);
 
                     // Jika ini user yang di-assign, tambahkan selected
-                    if (u.id === response[0].user_id) {
+                    if (u.id === response[0].assigned_to) {
                         option.prop('selected', true);
                     }
 
@@ -148,6 +150,53 @@
                 console.log(error);
             }
         });
+    }
+
+    function updateTask() {
+        var id = $('#task_id').val();
+        $('#buttonUpdate').prop('disabled', true);
+        $.ajax({
+            url: `/projects/${id}`,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'PUT',
+            data: {
+                task_name: $('#task_name').val(),
+                description: $('#description').val(),
+                assigned_to: $('#assigned_to').val(),
+                priority: $('#priority').val(),
+            },
+            success: function(response) {
+                $('#editModal').modal('hide');
+                $('#task_name').val('');
+                $('#description').val('');
+                $('#assigned_to').val('');
+                $('#priority').val('');
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Task updated successfully!',
+                    timer: 1000,
+                    showConfirmButton: false
+                }).then(() => {
+                    location.reload();
+                });
+                $('#buttonUpdate').prop('disabled', false);
+            },
+            error: function(error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to update task!',
+                    timer: 1000,
+                    showConfirmButton: false
+                }).then(() => {
+                    location.reload();
+                });
+            }
+        })
     }
 </script>
 @endpush
