@@ -1,6 +1,28 @@
 @extends('layouts.template.app')
 
 @section('content')
+
+<style>
+    .task-container {
+        min-height: 100px;
+    }
+
+    /* Saat dragging, kasih gaya biar placeholder gak bikin kolom collapse */
+    .task-placeholder {
+        background-color: #e9ecef;
+        border: 2px dashed #adb5bd;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        height: 80px;
+    }
+
+    /* Biar card tetap smooth saat di-drag */
+    .ui-sortable-helper {
+        transform: rotate(2deg);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between mb-2">
         <div id="projectId" class="d-none">{{ $project->id }}</div>
@@ -21,7 +43,7 @@
 
         @foreach ($columns as $col)
         <div class="col-md">
-            <div class="bg-white border rounded shadow-sm h-100 d-flex flex-column">
+            <div class="task-container bg-white border rounded shadow-sm h-100 d-flex flex-column">
                 {{-- Header --}}
                 <div class="p-2 rounded-top" style="background-color: {{ $col['color'] }}">
                     <span class="text-white fw-semibold">{{ $col['title'] }}</span>
@@ -31,7 +53,7 @@
                 <div class="flex-grow-1 p-3 overflow-auto" style="max-height: 800px; background-color: #f8f9fa;">
                     @forelse ($project->tasks->where('status', $col['status']) as $task)
                     <div class="card border-0 shadow-sm mb-3 hover-card">
-                        <div class="card-body">
+                        <div class="card-body tasks">
                             <div class="d-flex justify-content-between align-items-start">
                                 <h6 class="card-title fw-bold mb-2 text-primary">
                                     {{ $task->task_name }}
@@ -127,6 +149,20 @@
 
 @push('scripts')
 <script>
+    $(document).ready(function() {
+        $(".task-container").sortable({
+            connectWith: ".task-container",
+            placeholder: "task-placeholder",
+            items: ".tasks",
+            update: function(event, ui) {
+                const taskId = ui.item.data("id");
+                const newStatus = ui.item.closest(".task-container").data("status");
+
+                console.log('geser');
+            }
+        }).disableSelection();
+    });
+
     function displayEditModal(id) {
         $('#task_id').val(id);
         $('#editModal').modal('show');
@@ -255,13 +291,13 @@
         });
     }
 
-    function editProject(){
+    function editProject() {
         console.log("edit project");
         var id = $("#projectId").text();
         location.href = `/projects/${id}/edit`;
     }
 
-    function deleteProject(){
+    function deleteProject() {
         var id = $("#projectId").text();
 
         Swal.fire({
@@ -303,7 +339,7 @@
                 });
             }
         })
-        
+
     }
 </script>
 @endpush

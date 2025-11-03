@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 @include('components.template.header')
-
+@stack('css')
 <body id="page-top">
 
     <!-- Page Wrapper -->
@@ -230,10 +230,11 @@
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">
                             @php
-                                $page = request()->segment(1);
-                                $page = ucfirst($page);
+                            $page = request()->segment(1);
+                            $page = ucfirst($page);
                             @endphp
-                            {{ ucfirst($page) }}</h1>
+                            {{ ucfirst($page) }}
+                        </h1>
                         {{-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                 class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> --}}
                     </div>
@@ -293,6 +294,9 @@
     <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
+    <!-- jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
     <!-- Core plugin JavaScript-->
     <script src="{{ asset('assets/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 
@@ -308,22 +312,24 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        @if (session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: '{{ session('success') }}',
-                timer: 1500,
-                showConfirmButton: false
-            });
+        @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: '{{ session('
+            success ') }}',
+            timer: 1500,
+            showConfirmButton: false
+        });
         @endif
 
-        @if (session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: '{{ session('error') }}'
-            });
+        @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: '{{ session('
+            error ') }}'
+        });
         @endif
     </script>
 
