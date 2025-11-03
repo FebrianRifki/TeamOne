@@ -50,7 +50,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">All Projects</h6>
                 @foreach ($projects as $project)
-                    <a class="collapse-item" href="{{ route('projects.show', $project->id) }}">
+                    <a class="collapse-item overflow-hidden" href="{{ route('projects.show', $project->id) }}">
                         {{ $project->project_name }}
                     </a>
                 @endforeach

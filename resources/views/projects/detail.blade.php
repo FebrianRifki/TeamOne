@@ -2,9 +2,13 @@
 
 @section('content')
 <div class="container-fluid py-4">
-    <div class="d-flex justify-content-end mb-2">
+    <div class="d-flex justify-content-between mb-2">
         <div id="projectId" class="d-none">{{ $project->id }}</div>
-        <button class="btn-sm btn-danger" onclick="deleteProject()">Delete Project</button>
+        <button class="btn-sm btn-primary mr-2" onclick="createTask()">Add Task</button>
+        <div>
+            <button class="btn-sm btn-primary mr-2" onclick="editProject()">Edit Project</button>
+            <button class="btn-sm btn-danger" onclick="deleteProject()">Delete Project</button>
+        </div>
     </div>
     <div class="row g-4 text-center">
         @php
@@ -249,6 +253,12 @@
                 });
             }
         });
+    }
+
+    function editProject(){
+        console.log("edit project");
+        var id = $("#projectId").text();
+        location.href = `/projects/${id}/edit`;
     }
 
     function deleteProject(){
