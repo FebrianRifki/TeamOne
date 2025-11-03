@@ -2,6 +2,10 @@
 
 @section('content')
 <div class="container-fluid py-4">
+    <div class="d-flex justify-content-end mb-2">
+        <div id="projectId" class="d-none">{{ $project->id }}</div>
+        <button class="btn-sm btn-danger" onclick="deleteProject()">Delete Project</button>
+    </div>
     <div class="row g-4 text-center">
         @php
         $columns = [
@@ -29,11 +33,11 @@
                                     {{ $task->task_name }}
                                 </h6>
                                 <div>
-                                    <button class="btn btn-light btn-sm border-0 text-secondary" onclick="deleteTask({{$task->id}})">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
                                     <button class="btn btn-light btn-sm border-0 text-secondary" onclick="displayEditModal({{$task->id}})">
                                         <i class="fas fa-pen"></i>
+                                    </button>
+                                    <button class="btn btn-light btn-sm border-0 text-secondary" onclick="deleteTask({{$task->id}})">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </div>
@@ -133,17 +137,15 @@
                 $('#task_name').val(response[0].task_name);
                 $('#description').val(response[0].description);
 
-                // Kosongkan select dan append options
                 var userSelect = $('#assigned_to');
                 userSelect.empty();
 
                 response[1].forEach(u => {
-                    // Buat option
+
                     var option = $('<option></option>')
                         .val(u.id)
                         .text(u.name);
 
-                    // Jika ini user yang di-assign, tambahkan selected
                     if (u.id === response[0].assigned_to) {
                         option.prop('selected', true);
                     }
@@ -247,6 +249,51 @@
                 });
             }
         });
+    }
+
+    function deleteProject(){
+        var id = $("#projectId").text();
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This project will be permanently deleted.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/projects/${id}`,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: 'Project has been deleted.',
+                            timer: 1000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.href = '/dashboard';
+                        });
+                    },
+                    error: function(error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to delete project!',
+                            timer: 1000,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            }
+        })
+        
     }
 </script>
 @endpush

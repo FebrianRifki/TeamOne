@@ -80,26 +80,59 @@ class ProjectController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Project $project)
     {
-        // $task = Task::with(['project', 'user'])->where('id', $id)->first();
-        // $users = User::where('role_id', '!=', 1)->get();
-        // return response()->json([$task, $users]);
+        try {
+            return view('projects.edit', compact('project'));
+        } catch (\Throwable $th) {
+            return view('projects.edit')->with('error', $th->getMessage());
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Project $project)
     {
-       
+        try {
+            $validator = Validator::make($request->all(), [
+                'project_name' => 'required|string|max:255',
+                'project_description' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            $project->update([
+                'project_name' => $request->project_name,
+                'description' => $request->project_description,
+            ]);
+
+            return redirect()->back()->with('success', 'Project updated successfully.');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Error: ' . $th->getMessage());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Project $project)
     {
-        
+        try {
+            $project->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Project deleted successfully.'
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $th->getMessage()
+            ]);
+        }
     }
 }
