@@ -26,7 +26,7 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between mb-2">
         <div id="projectId" class="d-none">{{ $project->id }}</div>
-        <button class="btn-sm btn-primary mr-2" onclick="createTask()">Add Task</button>
+        <button class="btn-sm btn-primary mr-2" data-toggle="modal" data-target="#addTaskModal">Add Task</button>
         <div>
             <button class="btn-sm btn-primary mr-2" onclick="editProject()">Edit Project</button>
             <button class="btn-sm btn-danger" onclick="deleteProject()">Delete Project</button>
@@ -67,7 +67,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <p class="card-text text-muted small mb-0">
+                            <p class="card-text text-muted small mb-0" style="text-align: left;">
                                 {{ $task->description }}
                             </p>
                         </div>
@@ -133,6 +133,60 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Task</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+            <div class="modal-body" id="addTaskModalBody">
+                <form id="addTaskForm" action="{{ route('tasks.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" id="task_id" name="task_id">
+                    <input type="hidden" id="project_id" name="project_id" value="{{ $project->id }}">
+                    <div class="form-group">
+                        <label>Task Name</label>
+                        <input type="text" id="task_name" name="task_name" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="description" name="description" class="form-control"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Assigned To</label>
+                        <select id="assigned_to" name="assigned_to" class="form-control">
+                            @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="priority" name="priority" class="form-control">
+                            <option value="1">Low</option>
+                            <option value="2">Medium</option>
+                            <option value="3">High</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-primary" type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @push('styles')
 <style>

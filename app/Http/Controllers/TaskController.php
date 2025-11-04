@@ -32,7 +32,31 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'task_name' => 'required|string|max:255',
+                'description' => 'required|string',
+                'assigned_to' => 'required|exists:users,id',
+                'priority' => 'required|in:1,2,3',
+            ]);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $task = Task::create([
+                'task_name' => $request->task_name,
+                'description' => $request->description,
+                'assigned_to' => $request->assigned_to,
+                'priority' => $request->priority,
+                'project_id' => $request->project_id,
+            ]);
+
+            $task->save();
+
+            return redirect()->back()->with('success', 'Task created successfully.');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Error: ' . $th->getMessage());
+        }
     }
 
     /**
