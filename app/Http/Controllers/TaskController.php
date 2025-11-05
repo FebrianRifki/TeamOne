@@ -117,6 +117,36 @@ class TaskController extends Controller
         }
     }
 
+    public function updateStatus(Request $request, string $id){
+        try {
+            $validator = Validator::make($request->all(), [
+                'status' => 'required|in:todo,in_progress,done',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $task = Task::findOrFail($id);
+            
+            $task->status = $request->status;
+            $task->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Task status updated successfully.',
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error: ' . $th->getMessage()
+            ], 500);
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      */

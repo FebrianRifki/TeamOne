@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('projects', ProjectController::class);
     Route::resource('tasks', TaskController::class);
+    Route::put('tasks/status/{id}', [TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
 });
 
 require __DIR__.'/auth.php';

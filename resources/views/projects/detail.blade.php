@@ -43,17 +43,18 @@
 
         @foreach ($columns as $col)
         <div class="col-md">
-            <div class="task-container bg-white border rounded shadow-sm h-100 d-flex flex-column">
+            <div class=" bg-white border rounded shadow-sm h-100 d-flex flex-column">
                 {{-- Header --}}
                 <div class="p-2 rounded-top" style="background-color: {{ $col['color'] }}">
                     <span class="text-white fw-semibold">{{ $col['title'] }}</span>
                 </div>
 
                 {{-- Scrollable body --}}
-                <div class="flex-grow-1 p-3 overflow-auto" style="max-height: 800px; background-color: #f8f9fa;">
+                <div class="task-container flex-grow-1 p-3 overflow-y-auto overflow-x-hidden" data-status="{{ $col['status'] }}" style="max-height: 800px; background-color: #f8f9fa;">
                     @forelse ($project->tasks->where('status', $col['status']) as $task)
-                    <div class="card border-0 shadow-sm mb-3 hover-card">
+                    <div class="card border-0 shadow-sm hover-card mb-3">
                         <div class="card-body tasks">
+                            <input type="hidden" id="task_id" value="{{ $task->id }}">
                             <div class="d-flex justify-content-between align-items-start">
                                 <h6 class="card-title fw-bold mb-2 text-primary">
                                     {{ $task->task_name }}
@@ -73,7 +74,7 @@
                         </div>
                     </div>
                     @empty
-                    <p class="text-muted small mt-3">No tasks in this column.</p>
+                    <p class="no-task text-muted small mt-3">No tasks in this column.</p>
                     @endforelse
                 </div>
             </div>
@@ -149,6 +150,7 @@
                     @csrf
                     <input type="hidden" id="task_id" name="task_id">
                     <input type="hidden" id="project_id" name="project_id" value="{{ $project->id }}">
+
                     <div class="form-group">
                         <label>Task Name</label>
                         <input type="text" id="task_name" name="task_name" class="form-control">
@@ -207,12 +209,43 @@
         $(".task-container").sortable({
             connectWith: ".task-container",
             placeholder: "task-placeholder",
-            items: ".tasks",
-            update: function(event, ui) {
-                const taskId = ui.item.data("id");
-                const newStatus = ui.item.closest(".task-container").data("status");
+            items: ".card",
+            receive: function(event, ui) {
+                const container = $(this);
+                container.find(".no-task").remove();
 
-                console.log('geser');
+                const taskId = $(this).find("#task_id").val();
+                const newStatus = $(this).data("status");
+                $.ajax({
+                    url: `/tasks/status/${taskId}`,
+                    type: 'PUT',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        status: newStatus
+                    },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to update task status.',
+                        });
+                    }
+                });
+            },
+            update: function(event, ui) {
+                const body = $(this);
+                if (body.find(".card").length === 0) {
+                    if (body.find(".no-task").length === 0) {
+                        body.append("<p class='no-task text-muted small mt-3'>No tasks in this column.</p>");
+                    }
+                }
+                const taskId = $(this).find("#task_id").val();
+                const newStatus = $(this).data("status");
             }
         }).disableSelection();
     });
