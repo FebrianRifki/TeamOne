@@ -84,12 +84,12 @@
             </li> --}}
 
     <!-- Divider -->
-    <hr class="sidebar-divider">
+    <!-- <hr class="sidebar-divider"> -->
 
     <!-- Heading -->
-    <div class="sidebar-heading">
+    <!-- <div class="sidebar-heading">
         Addons
-    </div>
+    </div> -->
 
     <!-- Nav Item - Pages Collapse Menu -->
     {{-- <li class="nav-item">
@@ -113,11 +113,11 @@
             </li> --}}
 
     <!-- Nav Item - Charts -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
         <a class="nav-link" href="charts.html">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>Charts</span></a>
-    </li>
+    </li> -->
 
     {{-- <!-- Nav Item - Tables -->
             <li class="nav-item">
