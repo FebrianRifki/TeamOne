@@ -51,7 +51,14 @@
                                         <div class="form-group">
                                             <input type="password" name="password" class="form-control form-control-user"
                                                 id="password" placeholder="Password">
+
                                         </div>
+
+                                        @error('email')
+                                        <div class="invalid-feedback d-block mb-2 ml-2">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck">
@@ -65,31 +72,31 @@
                                         {{-- <!-- -->
                                             <hr>
                                             <a href="{{ route('login') }}" class="btn btn-google btn-user btn-block">
-                                                <i class="fab fa-google fa-fw"></i> Login with Google
-                                            </a>
-                                            <a href="{{ route('login') }}" class="btn btn-facebook btn-user btn-block">
-                                                <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
-                                            </a>
+                                        <i class="fab fa-google fa-fw"></i> Login with Google
+                                        </a>
+                                        <a href="{{ route('login') }}" class="btn btn-facebook btn-user btn-block">
+                                            <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
+                                        </a>
                                         <!-- --> --}}
                                     </form>
                                     <hr>
                                     {{-- <!-- -->
                                     <div class="text-center">
                                         <a class="small" href="{{ route('forgot-password') }}">Forgot Password?</a>
-                                    </div>
-                                    <div class="text-center">
-                                        <a class="small" href="{{ route('register') }}">Create an Account!</a>
-                                    </div>
-                                    <!-- --> --}}
                                 </div>
+                                <div class="text-center">
+                                    <a class="small" href="{{ route('register') }}">Create an Account!</a>
+                                </div>
+                                <!-- --> --}}
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
 
         </div>
+
+    </div>
 
     </div>
 

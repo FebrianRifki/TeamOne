@@ -71,8 +71,8 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Total Project</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $project }}</div>
+                            Total Task</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $total_task }}</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-comments fa-2x text-gray-300"></i>
@@ -97,22 +97,22 @@
             <!-- Card Body -->
             <div class="card-body">
                 <h4 class="small font-weight-bold">To Do Task <span
-                        class="float-right">60%</span></h4>
+                        class="float-right">{{ round($todo_task_percent) }}%</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar" role="progressbar" style="width: 60%"
-                        aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar" role="progressbar" style="width: {{ round($todo_task_percent) }}%"
+                        aria-valuenow="{{ round($todo_task_percent) }}" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <h4 class="small font-weight-bold">In Progress Task <span
-                        class="float-right">80%</span></h4>
+                        class="float-right">{{ round($in_progress_task_percent) }}%</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar bg-info" role="progressbar" style="width: 80%"
-                        aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-info" role="progressbar" style="width: {{ round($in_progress_task_percent) }}%"
+                        aria-valuenow="{{ round($in_progress_task_percent) }}" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <h4 class="small font-weight-bold">Done Task <span
-                        class="float-right">Complete!</span></h4>
+                        class="float-right">{{ round($done_task_percent) }}%</span></h4>
                 <div class="progress">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%"
-                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ round($done_task_percent) }}%"
+                        aria-valuenow="{{ round($done_task_percent) }}" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
         </div>
@@ -124,8 +124,8 @@
             <!-- Card Header - Dropdown -->
             <div
                 class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
-                <div class="dropdown no-arrow">
+                <h6 class="m-0 font-weight-bold text-primary">Progress Overview</h6>
+                <!-- <div class="dropdown no-arrow">
                     <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
@@ -138,27 +138,70 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">Something else here</a>
                     </div>
-                </div>
+                </div> -->
             </div>
             <!-- Card Body -->
             <div class="card-body">
                 <div class="chart-pie pt-4 pb-2">
-                    <canvas id="myPieChart"></canvas>
+                    <canvas id="newPieChart"></canvas>
                 </div>
                 <div class="mt-4 text-center small">
                     <span class="mr-2">
-                        <i class="fas fa-circle text-primary"></i> Direct
+                        <i class="fas fa-circle text-primary"></i> To do
                     </span>
                     <span class="mr-2">
-                        <i class="fas fa-circle text-success"></i> Social
+                        <i class="fas fa-circle text-success"></i> In progress
                     </span>
                     <span class="mr-2">
-                        <i class="fas fa-circle text-info"></i> Referral
+                        <i class="fas fa-circle text-info"></i> Done
                     </span>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    const to_do = Math.round({{ $todo_task_percent }});
+    const in_progress = Math.round({{ $in_progress_task_percent }});
+    const done = Math.round({{ $done_task_percent }});
+    // Set new default font family and font color to mimic Bootstrap's default styling
+    Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+    Chart.defaults.global.defaultFontColor = '#858796';
+
+    // Pie Chart Example
+    var ctx = document.getElementById("newPieChart");
+    var myPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ["Todo", "In Progress", "Done"],
+            datasets: [{
+                data: [to_do, in_progress, done],
+                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+                hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            legend: {
+                display: false
+            },
+            cutoutPercentage: 80,
+        },
+    });
+</script>
+@endpush
 
 @endsection
