@@ -138,6 +138,7 @@ class TaskController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Task status updated successfully.',
+                'task' => $task
             ]);
         } catch (\Throwable $th) {
             return response()->json([

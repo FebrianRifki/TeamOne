@@ -52,9 +52,8 @@
                 {{-- Scrollable body --}}
                 <div class="task-container flex-grow-1 p-3 overflow-y-auto overflow-x-hidden" data-status="{{ $col['status'] }}" style="max-height: 800px; background-color: #f8f9fa;">
                     @forelse ($project->tasks->where('status', $col['status']) as $task)
-                    <div class="card border-0 shadow-sm hover-card mb-3">
+                    <div class="card border-0 shadow-sm hover-card mb-3" data-id="{{ $task->id }}">
                         <div class="card-body tasks">
-                            <input type="hidden" id="task_id" value="{{ $task->id }}">
                             <div class="d-flex justify-content-between align-items-start">
                                 <h6 class="card-title fw-bold mb-2 text-primary">
                                     {{ $task->task_name }}
@@ -214,7 +213,7 @@
                 const container = $(this);
                 container.find(".no-task").remove();
 
-                const taskId = $(this).find("#task_id").val();
+                const taskId = ui.item.data("id");
                 const newStatus = $(this).data("status");
                 $.ajax({
                     url: `/tasks/status/${taskId}`,
@@ -244,8 +243,6 @@
                         body.append("<p class='no-task text-muted small mt-3'>No tasks in this column.</p>");
                     }
                 }
-                const taskId = $(this).find("#task_id").val();
-                const newStatus = $(this).data("status");
             }
         }).disableSelection();
     });
