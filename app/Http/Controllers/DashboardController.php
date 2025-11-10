@@ -26,6 +26,7 @@ class DashboardController extends Controller
 
         $project = Project::where("owner_id", auth()->id())->count();
 
+      
         return view("dashboard.dashboard", compact("task", "task_in_progress", "task_done", "total_task", "project", "todo_task_percent", "in_progress_task_percent", "done_task_percent"));
     }
 }

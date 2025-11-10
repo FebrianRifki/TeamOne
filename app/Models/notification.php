@@ -13,6 +13,7 @@ class notification extends Model
         'type',
         'is_read',
         'updated_by',
+        'link'
     ];
 
     public function user()

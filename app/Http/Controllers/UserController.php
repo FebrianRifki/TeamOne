@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Notification;
 
 class UserController extends Controller
 {
@@ -41,7 +42,17 @@ class UserController extends Controller
         $validated['role_id'] = 2;
     
         User::create($validated);
-    
+
+        // Admin Notification
+        $admin = User::where('role_id', 1)->first();
+        Notification::create([
+            'title' => 'New User Created',
+            'message' => 'A new user has been created',
+            'link' => route('users.index'),
+            'user_id' => $admin->id,
+        ]);
+
+        
         return redirect()->route('users.index')->with('success', 'User created successfully');
     }
 

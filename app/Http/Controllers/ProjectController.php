@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Notification;
 
 use function Pest\Laravel\json;
 
@@ -47,6 +48,11 @@ class ProjectController extends Controller
                     ->withErrors($validator)
                     ->withInput();
             }
+            
+            $existingProject = Project::where('project_name', $request->project_name)->where('deleted_at', null)->first();
+            if ($existingProject) {
+                return redirect()->back()->with('error', 'Project name already exists.');
+            }
 
             $name = $request->project_name;
             $initials = collect(explode(' ', $name))
@@ -59,6 +65,24 @@ class ProjectController extends Controller
                 'description' => $request->project_description,
                 'project_code' => $projectCode,
                 'owner_id' => Auth::user()->id,
+            ]);
+
+            $project = Project::latest()->first();
+
+            // User Notification
+            Notification::create([
+                'title' => 'New Project Created',
+                'message' => 'A new project has been created',
+                'link' => route('projects.index').'/'. $project->id,
+                'user_id' => Auth::user()->id,
+            ]);
+
+            // Admin Notification 
+            Notification::create([
+                'title' => 'New Project Created',
+                'message' => 'A new project has been created',
+                'link' => route('projects.index').'/'. $project->id,
+                'user_id' => 1,
             ]);
 
             return redirect()->back()->with('success', 'Project created successfully.');

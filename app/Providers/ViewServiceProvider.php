@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Project;
+use App\Models\Notification;
 
 class ViewServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,22 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Header: data notifikasi
+        View::composer('layouts.template.app', function ($view) {
+            $user = Auth::user();
+
+            if (!$user) {
+                return $view->with('notifications', collect());
+            }
+
+            $notifications = Notification::where('user_id', $user->id)
+                ->orderBy('created_at', 'desc')
+                ->take(10)
+                ->get();
+
+            $view->with('notifications', $notifications);
+        });
+
         View::composer('components.template.sidebar', function ($view) {
             $user = Auth::user();
 
